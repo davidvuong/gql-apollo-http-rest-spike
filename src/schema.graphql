@@ -1,0 +1,88 @@
+type Patient {
+  patientID: ID!;
+  patientName: String;
+  patientBirthDate: String;
+  patientBirthTime: Float;
+  patientSex: String;
+  ethnicGroup: String;
+  createdAt: String!;
+
+  studies: [Study];
+}
+
+type Study {
+  studyInstanceUID: ID!;
+  accessionNumber: String;
+  studyDescription: String;
+  patientAge: String;
+  patientSize: Float;
+  patientWeight: Float;
+  occupation: String;
+  studyDate: String;
+  studyTime: Float;
+  createdAt: String!;
+
+  patient: Patient;
+  series: [Series];
+}
+
+type Series {
+  seriesInstanceUID: ID!;
+  modality: String!;
+  seriesNumber: String;
+  seriesDate: String;
+  seriesTime: Float;
+  seriesDescription: String;
+  bodyPartExamined: String;
+  patientPosition: String;
+  performedProcedureStepStartDate: String;
+  performedProcedureStepStartTime: String;
+  createdAt: String!;
+
+  study: [Study];
+  equipment: Equipment;
+  frameOfReference: frameOfReference;
+  images: [Image];
+}
+
+type Equipment {
+  id: ID!;
+  manufacturer: String;
+  manufacturerModelName: String;
+  institutionName: String;
+  institutionAddress: String;
+  institutionDepartmentName: String;
+  stationName: String;
+  softwareVersions: [String!];
+  createdAt: String!;
+
+  series: Series;
+}
+
+type FrameOfReference {
+  frameOfReferenceUID: String!;
+  positionReferenceIndicator: String;
+  createdAt: String!;
+
+  series: Series;
+}
+
+type Image {
+  sopInstanceUID: ID!;
+  sopClassUID: String;
+  imageType: [String!];
+  samplesPerPixel: Int!;
+  photometricInterpretation: String!;
+  rows: Int!;
+  columns: Int!;
+  bitsAllocated: Int!;
+  bitsStored: Int!;
+  highBit: Int!;
+  instanceNumber: String;
+  contentDate: String;
+  contentTime: Float;
+  numberOfFrames: Int;
+  createdAt: String!;
+
+  series: Series;
+}
