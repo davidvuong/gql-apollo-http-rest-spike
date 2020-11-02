@@ -1,11 +1,13 @@
 import { v4 } from 'uuid';
 import faker from 'faker';
 import { format } from 'date-fns';
-import { sample, times } from 'lodash';
+import { sample, times, flatten, uniqueId } from 'lodash';
+import { Logger } from 'winston';
 
-export const genUID = (): string => BigInt(parseInt(`0${v4().replace(/-/g, '')}`, 16)).toString();
-export const genAlphaNumeric = (): string => faker.random.alphaNumeric();
-export const genName = (): string => faker.name.findName();
+export const genUID = (): string => `2.25.${BigInt(parseInt(`0${v4().replace(/-/g, '')}`, 16)).toString()}`;
+export const genUniqueId = uniqueId;
+export const genAlphaNumeric = faker.random.alphaNumeric;
+export const genName = faker.name.findName;
 export const genDateDICOM = (): string => format(faker.date.between('1992', '2020'), 'yyyyLLdd');
 export const genTimeDICOM = (): number => Math.random() * 1;
 export const genDateISO = (): string => new Date().toISOString();
@@ -16,7 +18,7 @@ export const genDescription = (): string => faker.lorem.sentences(2);
 export const genAgeDICOM = (): string => `${faker.random.number({ min: 1, max: 120 })}`.padStart(3, '0') + 'Y';
 export const genSize = (): number => faker.random.number({ min: 59, max: 272 });
 export const genWeight = (): number => faker.random.number({ min: 2.5, max: 442, precision: 0.001 });
-export const genCompanyName = (): string => faker.company.companyName();
+export const genCompanyName = faker.company.companyName;
 export const genAddress = (): string =>
   `${faker.address.streetAddress()}, ${faker.address.state()}, ${faker.address.country()}`;
 export const genVersion = (): string => `v${genNumber() + Math.random()}`;
@@ -1025,7 +1027,8 @@ export const genBodyPartExamined = (): string =>
 export const genOption = <A>(f: () => A): A | undefined => (Math.random() > 0.5 ? f() : undefined);
 export const genListOf = <A>(f: () => A, c: number): A[] => times(c, f);
 
-export const genPatient = () => ({
+export const genPatient = (args?: any) => ({
+  ID_: genUniqueId(),
   patientID: genUID(),
   patientName: genOption(genName),
   patientBirthDate: genOption(genDateDICOM),
@@ -1033,9 +1036,12 @@ export const genPatient = () => ({
   patientSex: genOption(genSex),
   ethnicGroup: genOption(genEthnicGroup),
   createdAt: genDateISO(),
+  ...args,
 });
 
-export const genStudy = () => ({
+export const genStudy = (args?: any) => ({
+  ID_: genUniqueId(),
+  patientID_: genUniqueId(),
   studyInstanceUID: genUID(),
   accessionNumber: genOption(genAccessionNumber),
   studyDescription: genOption(genDescription),
@@ -1046,9 +1052,12 @@ export const genStudy = () => ({
   studyDate: genOption(genDateDICOM),
   studyTime: genOption(genTimeDICOM),
   createdAt: genDateISO(),
+  ...args,
 });
 
-export const genSeries = () => ({
+export const genSeries = (args?: any) => ({
+  ID_: genUniqueId(),
+  studyID_: genUniqueId(),
   seriesInstanceUID: genUID(),
   modality: genOption(genModality),
   seriesNumber: genOption(() => `${genNumber()}`),
@@ -1060,10 +1069,12 @@ export const genSeries = () => ({
   performedProcedureStepStartDate: genOption(genDateDICOM),
   performedProcedureStepStartTime: genOption(genTimeDICOM),
   createdAt: genDateISO(),
+  ...args,
 });
 
-export const genEquipment = () => ({
-  id: genUID(),
+export const genEquipment = (args?: any) => ({
+  ID_: genUniqueId(),
+  seriesID_: genUniqueId(),
   manufacturer: genOption(genManufacturer),
   manufacturerModelName: genOption(() => `model_${genAlphaNumeric}`),
   institutionName: genOption(genCompanyName),
@@ -1072,15 +1083,21 @@ export const genEquipment = () => ({
   stationName: genOption(() => `station_${genAlphaNumeric()}`),
   softwareVersions: genOption(() => genListOf(genVersion, 2)),
   createdAt: genDateISO(),
+  ...args,
 });
 
-export const genFrameOfReference = () => ({
+export const genFrameOfReference = (args?: any) => ({
+  ID_: genUniqueId(),
+  seriesID_: genUniqueId(),
   frameOfReferenceUID: genUID(),
   positionReferenceIndicator: genOption(genAlphaNumeric),
   createdAt: genDateISO(),
+  ...args,
 });
 
-export const genImage = () => ({
+export const genImage = (args?: any) => ({
+  ID_: genUniqueId(),
+  seriesID_: genUniqueId(),
   sopInstanceUID: genUID(),
   sopClassUID: genUID(),
   imageType: genOption(() => genListOf(genAlphaNumeric, 3)),
@@ -1094,6 +1111,44 @@ export const genImage = () => ({
   instanceNumber: genOption(() => `${genNumber()}`),
   contentDate: genOption(genDateDICOM),
   contentTime: genOption(genTimeDICOM),
-  numberOfFrames: genOption(() => genNumber(1, 120)),
+  numberOfFrames: genOption(() => genNumber(1, 1024)),
   createdAt: genDateISO(),
+  ...args,
 });
+
+export const genRepoositoryDataset = () => {
+  const patients = times(genNumber(1, 1), genPatient);
+  const studies = flatten(patients.map(p => times(genNumber(1, 1), () => genStudy({ patientID_: p.ID_ }))));
+  const equipments: any[] = [];
+  const frameOfReferences: any[] = [];
+  const images: any[] = [];
+  const series = flatten(
+    studies.map(study =>
+      times(genNumber(1, 1), () => {
+        const s = genSeries({ studyID_: study.ID_ });
+        const equipment = genEquipment({ seriesID_: s.ID_ });
+        const frameOfReference = genFrameOfReference({ seriesID_: s.ID_ });
+        const seriesImages = times(genNumber(1, 1), () => genImage({ seriesID_: s.ID_ }));
+
+        equipments.push(equipment);
+        frameOfReferences.push(frameOfReference);
+        seriesImages.forEach(i => images.push(i));
+
+        return s;
+      }),
+    ),
+  );
+
+  return { patients, studies, series, equipments, frameOfReferences, images };
+};
+
+export const logDatasetUUIDs = (dataset: any, logger: Logger): void => {
+  logger.info(JSON.stringify(dataset, null, 2));
+
+  logger.info(`Patients: ${dataset.patients.map(p => p.ID_).join(', ')}`);
+  logger.info(`Studies: ${dataset.studies.map(s => s.ID_).join(', ')}`);
+  logger.info(`Series: ${dataset.series.map(s => s.ID_).join(', ')}`);
+  logger.info(`Equipments: ${dataset.equipments.map(e => e.ID_).join(', ')}`);
+  logger.info(`FrameOfReferences: ${dataset.frameOfReferences.map(f => f.ID_).join(', ')}`);
+  logger.info(`Images: ${dataset.images.map(i => i.ID_).join(', ')}`);
+};

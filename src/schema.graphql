@@ -1,5 +1,6 @@
 type Patient {
-  patientID: ID!;
+  id_: ID!;
+  patientID: String!;
   patientName: String;
   patientBirthDate: String;
   patientBirthTime: Float;
@@ -11,7 +12,8 @@ type Patient {
 }
 
 type Study {
-  studyInstanceUID: ID!;
+  id_: ID!;
+  studyInstanceUID: String!;
   accessionNumber: String;
   studyDescription: String;
   patientAge: String;
@@ -27,7 +29,8 @@ type Study {
 }
 
 type Series {
-  seriesInstanceUID: ID!;
+  id_: ID!;
+  seriesInstanceUID: String!;
   modality: String!;
   seriesNumber: String;
   seriesDate: String;
@@ -46,7 +49,7 @@ type Series {
 }
 
 type Equipment {
-  id: ID!;
+  id_: ID!;
   manufacturer: String;
   manufacturerModelName: String;
   institutionName: String;
@@ -60,6 +63,7 @@ type Equipment {
 }
 
 type FrameOfReference {
+  id_: ID!;
   frameOfReferenceUID: String!;
   positionReferenceIndicator: String;
   createdAt: String!;
@@ -68,7 +72,8 @@ type FrameOfReference {
 }
 
 type Image {
-  sopInstanceUID: ID!;
+  id_: ID!;
+  sopInstanceUID: String!;
   sopClassUID: String;
   imageType: [String!];
   samplesPerPixel: Int!;
