@@ -4,7 +4,7 @@
   "author": "David Vuong <david.vuong@voltron.studio>",
   "license": "MIT",
   "scripts": {
-    "start:http": "ts-node ./src/http.ts",
+    "start": "nodemon -e ts -w src --exec 'ts-node' src",
     "build": "rm -rf ./build && tsc",
     "test": "jest",
     "eslint": "eslint '{src,__tests__,scripts}/**/*.ts' --fix",
@@ -32,6 +32,7 @@
     "eslint-plugin-json": "2.1.2",
     "eslint-plugin-prettier": "3.1.4",
     "jest": "26.6.1",
+    "nodemon": "2.0.6",
     "prettier": "2.1.2",
     "ts-jest": "26.4.3",
     "ts-node": "9.0.0",
@@ -39,6 +40,7 @@
   },
   "dependencies": {
     "apollo-server": "2.18.2",
+    "apollo-server-express": "2.19.0",
     "compression": "1.7.4",
     "date-fns": "2.16.1",
     "express": "4.17.1",

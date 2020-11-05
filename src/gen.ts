@@ -1076,7 +1076,7 @@ export const genEquipment = (args?: any) => ({
   ID_: genUniqueId(),
   seriesID_: genUniqueId(),
   manufacturer: genOption(genManufacturer),
-  manufacturerModelName: genOption(() => `model_${genAlphaNumeric}`),
+  manufacturerModelName: genOption(() => `model_${genAlphaNumeric()}`),
   institutionName: genOption(genCompanyName),
   institutionAddress: genOption(genAddress),
   institutionDepartmentName: genOption(() => `department_${genAlphaNumeric()}`),
@@ -1152,3 +1152,5 @@ export const logDatasetUUIDs = (dataset: any, logger: Logger): void => {
   logger.info(`FrameOfReferences: ${dataset.frameOfReferences.map(f => f.ID_).join(', ')}`);
   logger.info(`Images: ${dataset.images.map(i => i.ID_).join(', ')}`);
 };
+
+export const dataset = genRepoositoryDataset();

@@ -1,93 +1,100 @@
 type Patient {
-  id_: ID!;
-  patientID: String!;
-  patientName: String;
-  patientBirthDate: String;
-  patientBirthTime: Float;
-  patientSex: String;
-  ethnicGroup: String;
-  createdAt: String!;
+  id_: ID!
+  patientID: String!
+  patientName: String
+  patientBirthDate: String
+  patientBirthTime: Float
+  patientSex: String
+  ethnicGroup: String
+  createdAt: String!
 
-  studies: [Study];
+  studies: [Study]
 }
 
 type Study {
-  id_: ID!;
-  studyInstanceUID: String!;
-  accessionNumber: String;
-  studyDescription: String;
-  patientAge: String;
-  patientSize: Float;
-  patientWeight: Float;
-  occupation: String;
-  studyDate: String;
-  studyTime: Float;
-  createdAt: String!;
+  id_: ID!
+  studyInstanceUID: String!
+  accessionNumber: String
+  studyDescription: String
+  patientAge: String
+  patientSize: Float
+  patientWeight: Float
+  occupation: String
+  studyDate: String
+  studyTime: Float
+  createdAt: String!
 
-  patient: Patient;
-  series: [Series];
+  patient: Patient
+  series: [Series]
 }
 
 type Series {
-  id_: ID!;
-  seriesInstanceUID: String!;
-  modality: String!;
-  seriesNumber: String;
-  seriesDate: String;
-  seriesTime: Float;
-  seriesDescription: String;
-  bodyPartExamined: String;
-  patientPosition: String;
-  performedProcedureStepStartDate: String;
-  performedProcedureStepStartTime: String;
-  createdAt: String!;
+  id_: ID!
+  seriesInstanceUID: String!
+  modality: String!
+  seriesNumber: String
+  seriesDate: String
+  seriesTime: Float
+  seriesDescription: String
+  bodyPartExamined: String
+  patientPosition: String
+  performedProcedureStepStartDate: String
+  performedProcedureStepStartTime: String
+  createdAt: String!
 
-  study: [Study];
-  equipment: Equipment;
-  frameOfReference: frameOfReference;
-  images: [Image];
+  study: [Study]
+  equipment: Equipment
+  frameOfReference: FrameOfReference
+  images: [Image]
 }
 
 type Equipment {
-  id_: ID!;
-  manufacturer: String;
-  manufacturerModelName: String;
-  institutionName: String;
-  institutionAddress: String;
-  institutionDepartmentName: String;
-  stationName: String;
-  softwareVersions: [String!];
-  createdAt: String!;
+  id_: ID!
+  manufacturer: String
+  manufacturerModelName: String
+  institutionName: String
+  institutionAddress: String
+  institutionDepartmentName: String
+  stationName: String
+  softwareVersions: [String!]
+  createdAt: String!
 
-  series: Series;
+  series: Series
 }
 
 type FrameOfReference {
-  id_: ID!;
-  frameOfReferenceUID: String!;
-  positionReferenceIndicator: String;
-  createdAt: String!;
+  id_: ID!
+  frameOfReferenceUID: String!
+  positionReferenceIndicator: String
+  createdAt: String!
 
-  series: Series;
+  series: Series
 }
 
 type Image {
-  id_: ID!;
-  sopInstanceUID: String!;
-  sopClassUID: String;
-  imageType: [String!];
-  samplesPerPixel: Int!;
-  photometricInterpretation: String!;
-  rows: Int!;
-  columns: Int!;
-  bitsAllocated: Int!;
-  bitsStored: Int!;
-  highBit: Int!;
-  instanceNumber: String;
-  contentDate: String;
-  contentTime: Float;
-  numberOfFrames: Int;
-  createdAt: String!;
+  id_: ID!
+  sopInstanceUID: String!
+  sopClassUID: String
+  imageType: [String!]
+  samplesPerPixel: Int!
+  photometricInterpretation: String!
+  rows: Int!
+  columns: Int!
+  bitsAllocated: Int!
+  bitsStored: Int!
+  highBit: Int!
+  instanceNumber: String
+  contentDate: String
+  contentTime: Float
+  numberOfFrames: Int
+  createdAt: String!
 
-  series: Series;
+  series: Series
+}
+
+type Query {
+  Study(id: String): Study
+  Studies: [Study]
+  Patient(id: String): Patient
+  Patients: [Patient]
 }
