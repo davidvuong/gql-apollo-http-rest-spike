@@ -19,12 +19,11 @@ yarn
 Start both GraphQL and HTTP servers:
 
 ```bash
-yarn start:http
-yarn start:gql
+yarn start
 ```
 
-Open the GraphQL console to query and mutate data:
+Open the GraphQL console to query data:
 
 ```bash
-open localhost:8083
+open http://localhost:8081/graphql
 ```
