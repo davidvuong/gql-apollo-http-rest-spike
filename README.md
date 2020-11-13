@@ -27,3 +27,9 @@ Open the GraphQL console to query data:
 ```bash
 open http://localhost:8081/graphql
 ```
+
+## Learnings
+
+- Forget about creating a HTTP REST API. Do all the work within the GQL layer
+- Use `graphql-code-generator` to create TypeScript interfaces
+- Use `dataloader` to batch and apollo's natively supported cache for caching
